@@ -12,8 +12,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class Main {
-    public final static String ENCRYPT_PASSWORD = "pensees@20201029";
-
+    //public final static String ENCRYPT_PASSWORD = "pensees@20201029";
+    public final static String ENCRYPT_PASSWORD = "K8Ff3KY4gSjGstf%";
     public static void main(String[] args) throws NoSuchAlgorithmException {
         String ch = ENCRYPT_PASSWORD + "_" + "bbb";
         AES aes = SecureUtil.aes(ENCRYPT_PASSWORD.getBytes());
@@ -23,6 +23,15 @@ public class Main {
         System.out.println("======" + MD5Utils.stringToMD5(aes.encryptBase64(ch)).substring(0, 20));
        //dd(ch);
 
+        byte[] deByte = aes.decryptFromBase64("b82u71zdtVPTj4Bqi4aNEQoUCcN3pz+TLjribzCARiE=");
+        System.out.println(new String(new byte[]{deByte[0]}));
+        //System.out.printf("%d",(int)deByte[1]);
+        int v1 = deByte[1];
+        v1 = v1&0xff;
+        System.out.println(v1);
+        int v2 = deByte[2];
+        v2 = v2&0xff;
+        System.out.println(v2);
     }
 
     public static void dd(String ch) {
