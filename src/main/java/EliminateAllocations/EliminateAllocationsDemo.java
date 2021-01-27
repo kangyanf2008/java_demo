@@ -2,6 +2,21 @@ package EliminateAllocations;
 
 public class EliminateAllocationsDemo {
     public static void main(String[] args) {
+
+        /**
+         *  参数 -XX:+DoEscapeAnalysis 启用逃逸分析（默认打开）
+         *  参数 -XX:+EliminateAllocations 开启标量替换（默认打开）
+         *  开启6-7毫秒  100000000 noEscape()
+         *  关闭600-700毫秒  100000000
+         *
+         *
+         *  参数 -XX:+DoEscapeAnalysis 启用逃逸分析（默认打开）
+         *  参数 -XX:+EliminateAllocations 开启标量替换（默认打开）
+         *  开启530-720毫秒  100000000 escape()
+         *  关闭660-700毫秒  100000000  escape()
+         *
+         */
+
         int n = 100000000;
         long begin = System.currentTimeMillis();
         EscapeAnalysis escapeAnalysis = new EscapeAnalysis();
@@ -24,6 +39,13 @@ class EscapeAnalysis {
         p = new Person(300, "escape ..............");
     }
 
+
+    /**
+     *  参数 -XX:+DoEscapeAnalysis 启用逃逸分析（默认打开）
+     *  参数 -XX:+EliminateAllocations 开启标量替换（默认打开）
+     *  开启6-7毫秒
+     *  关闭600-700毫秒
+     */
     //1情况 -Xms5m -Xmx5m -XX:+PrintGC -XX:-EliminateAllocations
     //2情况 -Xms5m -Xmx5m -XX:+PrintGC -XX:+EliminateAllocations 或者去掉 -XX:+EliminateAllocations
     public String noEscape() {
