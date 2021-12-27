@@ -1,0 +1,3 @@
+spi.impl.HbaseConnectFactory
+spi.impl.MongoConnectFactory
+spi.impl.MysqlConnectFactory

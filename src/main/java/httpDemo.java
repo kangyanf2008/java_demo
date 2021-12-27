@@ -8,7 +8,7 @@ import java.security.cert.X509Certificate;
 
 public class httpDemo {
     public static void main(String[] args) throws IOException {
-        String url = "https://cloud.pensees-systems.com";
+        String url = "https://baidu.com";
         System.out.println(httpGet(url));
     }
 
