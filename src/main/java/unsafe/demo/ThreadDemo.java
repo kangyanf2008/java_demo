@@ -30,7 +30,7 @@ public class ThreadDemo {
             //LockSupport.parkUntil(s, 1000);
             Thread.sleep(20000L);
             System.out.println("解开阻塞");
-            LockSupport.unpark(s);
+                LockSupport.unpark(s);
             Thread.sleep(10000L);
         } catch (InterruptedException e) {
             e.printStackTrace();
