@@ -1,4 +1,5 @@
 // 必须定义 `ShowMeBug` 入口类和 `public static void main(String[] args)` 入口方法
+import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -9,7 +10,7 @@ public class ShowMeBug {
     private static Condition c1 = lock.newCondition();
     private static Condition c2 = lock.newCondition();
     private static CountDownLatch count =new CountDownLatch (2);
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
 
         Thread t1=new Thread(()->{
             try{
@@ -39,12 +40,13 @@ public class ShowMeBug {
                 count.countDown();
             }
         });
-        t1.start();
-        Thread.sleep(1000L);
         t2.start();
+        Thread.sleep(1000L);
+        t1.start();
         t1.join();
         t2.join();
 
-        Thread.sleep(5000L);
+        //Thread.sleep(5000L);
+        //System.in.read();
     }
 }
