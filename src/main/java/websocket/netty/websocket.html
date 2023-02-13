@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+<body>
+<div>&nbsp;pub msg</div>&nbsp;<textarea rows="5" cols="100" id='msg'></textarea></br>
+    &nbsp;<input type="button" value="Send" onclick="send()" />
+    <div id="messageArea" name="messageArea" rows="10", cols="100"></div>
+</body>
+<script src="js/jquery-3.6.1.min.js" type="text/javascript"></script>
+<script>
+
+    var heartCheck = {
+    pongTime: 30 * 1000, //30秒接收心跳
+    pingTime: (30 * 1000 / 10) * 8,
+    timeoutObj: null,
+    serverTimeoutObj: null,
+    reset: function () {
+        // clearTimeout(this.timeoutObj);
+        clearTimeout(this.serverTimeoutObj);
+        return this;
+    },
+    PingStart: function () {
+        var self = this;
+        this.timeoutObj = setTimeout(function () {
+            //这里发送一个心跳，后端收到后，返回一个心跳消息，
+            //onmessage拿到返回的心跳就说明连接正常
+            if (WEB_SOCKET != null && WEB_SOCKET.readyState == WebSocket.OPEN) {
+                console.log("心跳发送PING");
+                WEB_SOCKET.send("PING")
+                self.PingStart();
+            }
+        }, this.pingTime) //10秒发送一次心跳
+    },
+    PongStart: function () {
+        var self = this;
+        self.serverTimeoutObj = setTimeout(function () { //如果超过一定时间还没重置，说明后端主动断开了
+            if (WEB_SOCKET != null) {
+                console.log("服务器30秒没有响应，关闭连接")
+                WEB_SOCKET.close();
+            }
+        }, self.pongTime)
+    }
+}
+    var url = "ws://127.0.0.1:8080";
+    var WEB_SOCKET;
+    try{
+        if ('WebSocket' in window) {
+          WEB_SOCKET = new WebSocket(url);
+        } else if ('MozWebSocket' in window) {
+          WEB_SOCKET = new MozWebSocket(url);
+        } else {
+          WEB_SOCKET = new SockJS(url);
+        }
+      }catch {
+
+      }
+
+    WEB_SOCKET.onopen = function (evt) {
+        console.log("连接成功，发送ping");
+        WEB_SOCKET.send("PING")
+        heartCheck.PingStart();
+        heartCheck.reset().PongStart(); //打开心跳检测
+    };
+    WEB_SOCKET.onerror = function (err) {
+        console.log(err);
+        if (WEB_SOCKET != null) {
+            console.log("异常，关闭连接", err);
+            WEB_SOCKET.close();
+        }
+        reject(err)
+    }
+    WEB_SOCKET.onmessage = function (evt) {
+        if (WEB_SOCKET != null) {
+            heartCheck.reset().PongStart(); //拿到任何消息都说明当前连接是正常的 心跳检测重置
+        }
+    };
+    WEB_SOCKET.onclose = function (evt) {
+        console.log("Connection closed.");
+    };
+
+    //自动重连机制 也和这个差不多，后面在发出来
+   function send() {
+       var s = document.getElementById("msg").value;
+       if (s) {
+           WEB_SOCKET.send(s);
+           document.getElementById("msg").value = "";
+          $("#messageArea").append("<b> send:"+ s + "</b></br>");
+       }
+   }
+</script>
+</html>
